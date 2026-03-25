@@ -145,4 +145,9 @@ To enable email sending, create a Gmail [App Password](https://support.google.co
 ## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
-Developed by *Amro Khaled* and *Abduallah Dawoud*.
+
+---
+
+## 👥 Authors
+
+Developed by **Amro Khaled** and **Abduallah Dawoud**.
