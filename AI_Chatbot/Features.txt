@@ -1,0 +1,5 @@
+This document talks about the features that the Web inferface provide:
+
+- Switch mode (light | Dark)
+- Api Checker (offline | Online)
+- 
