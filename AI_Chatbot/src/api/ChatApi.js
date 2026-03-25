@@ -1,5 +1,3 @@
-import { getGmailCredentials } from "../utils/ChatHelpers";
-
 const API_BASE = "http://127.0.0.1:8000";
 
 export async function sendMessage(message, files = [], onEvent = null) {
@@ -75,5 +73,29 @@ export async function sendMessage(message, files = [], onEvent = null) {
   };
 }
 
+export async function getModel() {
+  const res = await fetch(`${API_BASE}/api/model`);
+  if (!res.ok) throw new Error("Failed to get model");
+  return res.json();
+}
+
+export async function setModel(model) {
+  try {
+    const form = new FormData();
+    form.append("model", model);
+
+    const res = await fetch(`${API_BASE}/api/model`, {
+      method: "POST",
+      body: form,
+    });
+
+    if (!res.ok) throw new Error("Failed to set model");
+
+    return await res.json();
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
 
 

@@ -242,7 +242,18 @@ def download_file(filename: str):
         raise HTTPException(status_code=404, detail="File not found")
 
     return FileResponse(path, filename=filename)      
-         
+
+#--------------------------------------------------------Changing_Model------------------------------------------------------ 
+import config
+
+@app.get("/api/model")
+def get_model():
+    return {"model": config.CURRENT_MODEL}
+
+@app.post("/api/model")
+async def set_model(model: str = Form(...)):
+    config.CURRENT_MODEL = model
+    return {"ok": True, "model": config.CURRENT_MODEL}
               
         
         

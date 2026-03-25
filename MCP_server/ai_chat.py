@@ -1,3 +1,5 @@
+import config
+from config import OLLAMA_URL
 import requests
 import json
 import os
@@ -13,7 +15,6 @@ from tools import (
     read_files,
 )
 
-from config import OLLAMA_URL, OLLAMA_MODEL as MODEL_NAME
 
 
 
@@ -73,8 +74,7 @@ def extract_tool_call(reply: str):
 class AiChat :
     
     
-    def __init__(self, model: str = MODEL_NAME, system_prompt: str | None = None, max_history: int = 20):
-        self.model = model
+    def __init__(self, system_prompt: str | None = None, max_history: int = 20):
         self.messages = [] 
         self.max_history = max_history
         self.updated_at = time.time()
@@ -233,7 +233,7 @@ class AiChat :
             response = requests.post(
                 OLLAMA_URL,
                 json={
-                    "model": self.model,
+                    "model": config.CURRENT_MODEL,
                     "messages": messages,
                     "stream": False,
                 },

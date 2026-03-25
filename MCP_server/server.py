@@ -121,4 +121,4 @@ if __name__ == "__main__":
         # Kill the Vite frontend process cleanly (no "Terminate batch job?" prompt)
         if _frontend_proc and _frontend_proc.poll() is None:
             _frontend_proc.terminate()
-        print("\n👋 Server stopped.")
+        print("\n👋 Server stopped.")

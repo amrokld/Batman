@@ -2,9 +2,12 @@ import os
 import platform
 
 
+
 # --- Model Configuration ---
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434/api/chat")
 OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "gpt-oss:120b-cloud")  # or "mistral",gpt-oss:120b-cloud , qwen3:8b ,qwen2.5:7b
+
+CURRENT_MODEL = OLLAMA_MODEL
 
 # --- Tool Configuration (optional defaults, not required anymore) ---
 GMAIL_USER = os.environ.get("GMAIL_USER")

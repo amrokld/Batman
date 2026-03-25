@@ -79,4 +79,16 @@ export const TOOLS = [
       "Get the public IP information",
     ],
   },
+
+  {
+    name: "Browse Web",
+    description: "Open and summarize web pages from a link",
+    suggestions: [
+      "Open ",
+      "Summarize this link: ",
+      "Read this article: ",
+      "What is in this page: ",
+      "What is in this page: ",
+    ]
+  }
 ];

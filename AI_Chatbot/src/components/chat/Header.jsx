@@ -1,3 +1,6 @@
+import { useEffect, useState, useRef } from "react";
+import { getModel, setModel } from "../../api/ChatApi";
+
 function Header({
   isDark,
   apiStatus,
@@ -9,7 +12,34 @@ function Header({
   isToolSidebarOpen,
   setIsToolSidebarOpen,
 }) {
-  
+
+  const [model, setModelState] = useState("...");
+  const [showModelMenu, setShowModelMenu] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    getModel().then(res => setModelState(res.model)).catch(() => { });
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowModelMenu(false);
+      }
+    }
+
+    if (showModelMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showModelMenu]);
+
+  const isCloud = model.includes("cloud");
+  const modelLabel = `${isCloud ? "Cloud" : "Local"} • ${model}`;
+
   // header word-button style (same as your Clear/Dark mode)
   const headerWordBtn = (extra = "") =>
     "text-[11px] px-3 py-1 rounded-full border transition " +
@@ -26,27 +56,27 @@ function Header({
         ? "border-emerald-700 text-emerald-200 bg-emerald-900/20"
         : "border-emerald-300 text-emerald-700 bg-emerald-50"
       : apiStatus === "offline"
-      ? isDark
-        ? "border-red-700 text-red-200 bg-red-900/20"
-        : "border-red-300 text-red-700 bg-red-50"
-      : isDark
-      ? "border-neutral-700 text-neutral-200 bg-neutral-800"
-      : "border-zinc-300 text-zinc-700 bg-white");
+        ? isDark
+          ? "border-red-700 text-red-200 bg-red-900/20"
+          : "border-red-300 text-red-700 bg-red-50"
+        : isDark
+          ? "border-neutral-700 text-neutral-200 bg-neutral-800"
+          : "border-zinc-300 text-zinc-700 bg-white");
 
   const apiDotClass =
     "w-2 h-2 rounded-full " +
     (apiStatus === "online"
       ? "bg-emerald-400"
       : apiStatus === "offline"
-      ? "bg-red-400"
-      : "bg-zinc-400");
+        ? "bg-red-400"
+        : "bg-zinc-400");
 
   const apiLabel =
     apiStatus === "online"
       ? "Online"
       : apiStatus === "offline"
-      ? "Offline"
-      : "Checking";
+        ? "Offline"
+        : "Checking";
 
   return (
     <div>
@@ -88,17 +118,67 @@ function Header({
           </div>
 
           {/* CENTER */}
-          <div className="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none">
+          <div className="absolute left-1/2 -translate-x-1/2 text-center">
             <h1 className="text-sm font-semibold">AI Chatbot</h1>
-            <p className="text-[11px] opacity-70">Local assistant</p>
+            <p
+              onClick={() => setShowModelMenu(v => !v)}
+              className="text-[11px] opacity-70 cursor-pointer"
+            >
+              {modelLabel}
+            </p>
           </div>
+
+          {showModelMenu && (
+            <div
+              ref={menuRef}
+              className="absolute top-12 left-1/2 -translate-x-1/2 bg-white dark:bg-neutral-800 border rounded-lg shadow p-2 text-xs z-50">
+
+              <div className="mb-1 opacity-60">Local</div>
+              {["qwen2.5:7b", "mistral"].map(m => (
+                <div
+                  key={m}
+                  onClick={async () => {
+                    await setModel(m);
+                    setModelState(m);
+                    setShowModelMenu(false);
+                  }}
+                  className={
+                    "px-2 py-1 cursor-pointer rounded " +
+                    (model === m
+                      ? "bg-blue-500 text-white"
+                      : "hover:bg-black/10")
+                  }
+                >
+                  {m}
+                </div>
+              ))}
+
+              <div className="mt-2 mb-1 opacity-60">Cloud</div>
+              {["gpt-oss:120b-cloud"].map(m => (
+                <div
+                  key={m}
+                  onClick={async () => {
+                    await setModel(m);
+                    setModelState(m);
+                    setShowModelMenu(false);
+                  }}
+                  className="px-2 py-1 hover:bg-black/10 cursor-pointer rounded"
+                >
+                  {m}
+                </div>
+              ))}
+
+            </div>
+          )}
 
           {/* RIGHT */}
           <div className="ml-auto mr-2 flex items-center gap-2">
-            <span className={apiBadgeClass}>
+            <button
+              onClick={() => window.location.reload()}
+              className={apiBadgeClass}>
               <span className={apiDotClass} />
               API {apiLabel}
-            </span>
+            </button>
 
             <button
               type="button"
@@ -123,8 +203,8 @@ function Header({
                     ? "bg-neutral-800 border-neutral-600"
                     : "bg-zinc-200 border-zinc-400"
                   : isDark
-                  ? "border-neutral-700 hover:bg-neutral-800"
-                  : "border-zinc-300 hover:bg-zinc-200")
+                    ? "border-neutral-700 hover:bg-neutral-800"
+                    : "border-zinc-300 hover:bg-zinc-200")
               }
             >
               Tools
